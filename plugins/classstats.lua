@@ -2,84 +2,107 @@ PLUGIN.name = "Class Stats"
 PLUGIN.author = "Stan"
 PLUGIN.desc = "Allows class stats to be set and applied"
 
-function PLUGIN:PlayerSpawn(client)
-    if (client:Team() != 0) then
-        local classLoaded = client:GetNWBool("playerClassPluginLoaded")
-        if classLoaded == true then
-        	local char = client:getChar()
-            if (char) then
-            	local charClass = char:getClass()
-            	local class = nut.class.list[charClass]
-                if (class.health) then
-                	client:SetMaxHealth( class.health )
-                    client:SetHealth( class.health )
-                else
-                	client:SetMaxHealth( 100 )
-                    client:SetHealth( 100 )
-                end
-                
-                if (class.armor == 0 or class.armor == nil) then
-                    client:SetArmor( 0 )
-                elseif (class.armor) then
-                    client:SetArmor( class.armor )
-                else
-                    client:SetArmor( 0 ) 
-                end
-            
-            	if (class.scale) then
-                    client:SetModelScale( class.scale )
-                elseif (class.scale == 0 or class.scale == nil) then
-                    client:SetModelScale ( 1 )
-                else
-                    client:SetModelScale ( 1 )
-                end
-                
-                if (class.color) then
-                    client:SetPlayerColor(class.color)
-                elseif (class.color == 0 or class.color == nil) then
-                    local col = client:GetInfo( "cl_playercolor" )
-                    client:SetColor(Color(255, 255, 255, 255))
-                    client:SetPlayerColor( Vector( col ) )
-                else
-                    local col = client:GetInfo( "cl_playercolor" )
-                    client:SetColor(Color(255, 255, 255, 255))
-                    client:SetPlayerColor( Vector( col ) )
-                end
-                
-				--If you can be bothered to fix the red X's when being shot by this be my guest, but I don't use it. Blood enums here https://wiki.garrysmod.com/page/Enums/BLOOD_COLOR
-                --[[if (class.bloodcolor) then
-                    client:SetBloodColor(class.bloodcolor)
-                elseif (class.bloodcolor == 0 or class.bloodcolor == nil) then
-                    client:SetBloodColor( BLOOD_COLOR_RED ) --This is the index for regular red blood
-                else 
-                    client:SetBloodColor( BLOOD_COLOR_RED ) --This is the index for regular red blood
-                end--]]
-                
-            end
+function doLoadout(client)
+    local char = client:getChar()
+    if (char) then
+    	local charClass = char:getClass()
+    	local class = nut.class.list[charClass]
+        if (class.health) then
+        	client:SetMaxHealth( class.health )
+            client:SetHealth( class.health )
         else
-			--Respawns the target on first load to make sure that they are bugged
-			--If you use spawn saver, you will need to change the timer that it uses on line 19 and change the 0 to 2.1
-            timer.Simple(2, function()client:Kill() client:Spawn() end)
+        	client:SetMaxHealth( 100 )
+            client:SetHealth( 100 )
         end
+        
+        if (class.armor == 0 or class.armor == nil) then
+            client:SetArmor( 0 )
+        elseif (class.armor) then
+            client:SetArmor( class.armor )
+        else
+            client:SetArmor( 0 ) 
+        end
+    
+        if (class.scale) then
+            
+            local scaleViewFix = class.scale
+            local scaleViewFixOffset = Vector(0, 0, 64)
+            local scaleViewFixOffsetDuck = Vector(0, 0, 28)
+            
+            client:SetViewOffset(scaleViewFixOffset * class.scale)
+            client:SetViewOffsetDucked(scaleViewFixOffsetDuck * class.scale)
+            
+            client:SetModelScale( class.scale )
+                        
+        elseif (class.scale == 0 or class.scale == nil) then
+			client:SetViewOffset(Vector(0, 0, 64))
+			client:SetViewOffsetDucked(Vector(0, 0, 28))
+            client:SetModelScale ( 1 )
+        else
+			client:SetViewOffset(Vector(0, 0, 64))
+			client:SetViewOffsetDucked(Vector(0, 0, 28))
+            client:SetModelScale ( 1 )
+        end
+        
+        if (class.color) then
+            client:SetPlayerColor(class.color)
+        elseif (class.color == 0 or class.color == nil) then
+            local col = client:GetInfo( "cl_playercolor" )
+            client:SetColor(Color(255, 255, 255, 255))
+            client:SetPlayerColor( Vector( col ) )
+        else
+            local col = client:GetInfo( "cl_playercolor" )
+            client:SetColor(Color(255, 255, 255, 255))
+            client:SetPlayerColor( Vector( col ) )
+        end
+		
+        --If you can be bothered to fix the red X's when being shot by this be my guest, but I don't use it. Blood enums here https://wiki.garrysmod.com/page/Enums/BLOOD_COLOR
+        --[[if (class.bloodcolor) then
+            client:SetBloodColor(class.bloodcolor)
+        elseif (class.bloodcolor == 0 or class.bloodcolor == nil) then
+            client:SetBloodColor( BLOOD_COLOR_RED ) --This is the index for regular red blood
+        else 
+            client:SetBloodColor( BLOOD_COLOR_RED ) --This is the index for regular red blood
+        end--]]
+                    
     end
 end
---Only way I could get bug to fix really
+
+function PLUGIN:PlayerSpawn(client)
+	--Run short timer to give var to read correctly when change character, probably unneeded now but I left it in just to be sure
+    timer.Simple(0.1,function()
+        if (client:Team() != 0) then
+            local classLoaded = client:GetNWBool("playerClassPluginLoaded")
+            if classLoaded == true then
+            	doLoadout(client)
+            else
+                timer.Simple(0.5, function() doLoadout(client) end)
+            end
+        end
+    end)
+end
+
 if SERVER then
-	--Finds when player first spawns and sets their var to false
     function PLUGIN:PlayerInitialSpawn(ply)
         ply:SetNWBool("playerClassPluginLoaded", false)
     end
-    --Function finds if player character has loaded
+    function PLUGIN:PlayerLoadedChar(client)
+        client:SetNWBool("playerClassPluginLoaded", false)
+    end
+    
     function PLUGIN:CharacterLoaded(id)
         local character = nut.char.loaded[id]
         if (character) then
-			--find the owner of the character
 	        local client = character:getPlayer()
 	        if (IsValid(client)) then
-				--starts a one second timer to set the var to true, allows for first time spawn to be killed and respawned to fix the bug of not being able to move or interact with anything
                 timer.Simple(1, function()client:SetNWBool("playerClassPluginLoaded", true) end)
             end
         end
+    end
+	--Respawn player when they change class, you may disable this by commenting it out
+    function PLUGIN:OnPlayerJoinClass(client)
+        client:KillSilent()
+        timer.Simple(0.2, function() client:Spawn() end) --Timer done to avoid bugs with viewmodel camera
     end
 end
 
