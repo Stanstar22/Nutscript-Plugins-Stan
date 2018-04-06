@@ -8,7 +8,7 @@ function doLoadout(client)
     	local charClass = char:getClass()
     	local class = nut.class.list[charClass]
         if (class.health) then
-        	client:SetMaxHealth( class.health )
+            client:SetMaxHealth( class.health )
             client:SetHealth( class.health )
         else
         	client:SetMaxHealth( 100 )
@@ -35,12 +35,12 @@ function doLoadout(client)
             client:SetModelScale( class.scale )
                         
         elseif (class.scale == 0 or class.scale == nil) then
-			client:SetViewOffset(Vector(0, 0, 64))
-			client:SetViewOffsetDucked(Vector(0, 0, 28))
+	    client:SetViewOffset(Vector(0, 0, 64))
+	    client:SetViewOffsetDucked(Vector(0, 0, 28))
             client:SetModelScale ( 1 )
         else
-			client:SetViewOffset(Vector(0, 0, 64))
-			client:SetViewOffsetDucked(Vector(0, 0, 28))
+	    client:SetViewOffset(Vector(0, 0, 64))
+	    client:SetViewOffsetDucked(Vector(0, 0, 28))
             client:SetModelScale ( 1 )
         end
         
