@@ -7,7 +7,7 @@ if (SERVER) then
     end
     
     hook.Add("PrePACConfigApply", "PACRankRestrict", function(ply)
-        local pluginPlayerHasPac = ply:GetNWBool("playerClassPluginLoaded", false)
+        local pluginPlayerHasPac = ply:GetNWBool("playerHasPac", false)
         if (pluginPlayerHasPac != false) then
             if not ply:getChar():hasFlags("o") then
                 return false,"Insufficient rank to use PAC."
