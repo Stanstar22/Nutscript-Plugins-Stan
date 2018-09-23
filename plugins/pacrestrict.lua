@@ -3,11 +3,11 @@ PLUGIN.author = "Stan"
 PLUGIN.desc = "Disallows PAC usage to those who do not have a flag"
 if (SERVER) then
     function PLUGIN:PlayerInitialSpawn(ply)
-        ply:SetNWBool("playerHasPac", false)
+        ply:SetVar("playerHasPac", false)
     end
     
     hook.Add("PrePACConfigApply", "PACRankRestrict", function(ply)
-        local pluginPlayerHasPac = ply:GetNWBool("playerHasPac", false)
+        local pluginPlayerHasPac = ply:GetVar("playerHasPac", false)
         if (pluginPlayerHasPac != false) then
             if not ply:getChar():hasFlags("o") then
                 return false,"Insufficient rank to use PAC."
@@ -21,7 +21,7 @@ if (SERVER) then
         if (character) then
             local client = character:getPlayer()
             if (IsValid(client)) then
-                client:SetNWBool("playerHasPac", true)
+                client:SetVar("playerHasPac", true)
                 timer.Simple(1,
                     function() if client:getChar():hasFlags("o") || client:IsUserGroup("trialmod") || client:IsUserGroup("mod") || client:IsAdmin() then
                         client:ConCommand( "pac_wear_parts" )
