@@ -11,7 +11,7 @@ function doLoadout(client)
             client:SetMaxHealth( class.health )
             client:SetHealth( class.health )
         else
-        	client:SetMaxHealth( 100 )
+            client:SetMaxHealth( 100 )
             client:SetHealth( 100 )
         end
         
@@ -72,7 +72,7 @@ function PLUGIN:PlayerSpawn(client)
 	--Run short timer to give var to read correctly when change character, probably unneeded now but I left it in just to be sure
     timer.Simple(0.1,function()
         if (client:Team() != 0) then
-            local classLoaded = client:GetVar("playerClassPluginLoaded")
+            local classLoaded = client:GetVar("playerClassPluginLoaded", false)
             if classLoaded == true then
             	doLoadout(client)
             else
