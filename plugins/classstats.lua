@@ -72,7 +72,7 @@ function PLUGIN:PlayerSpawn(client)
 	--Run short timer to give var to read correctly when change character, probably unneeded now but I left it in just to be sure
     timer.Simple(0.1,function()
         if (client:Team() != 0) then
-            local classLoaded = client:GetNWBool("playerClassPluginLoaded")
+            local classLoaded = client:GetVar("playerClassPluginLoaded")
             if classLoaded == true then
             	doLoadout(client)
             else
@@ -84,10 +84,10 @@ end
 
 if SERVER then
     function PLUGIN:PlayerInitialSpawn(ply)
-        ply:SetNWBool("playerClassPluginLoaded", false)
+        ply:SetVar("playerClassPluginLoaded", false)
     end
     function PLUGIN:PlayerLoadedChar(client)
-        client:SetNWBool("playerClassPluginLoaded", false)
+        client:SetVar("playerClassPluginLoaded", false)
     end
     
     function PLUGIN:CharacterLoaded(id)
@@ -95,7 +95,7 @@ if SERVER then
         if (character) then
 	        local client = character:getPlayer()
 	        if (IsValid(client)) then
-                timer.Simple(1, function()client:SetNWBool("playerClassPluginLoaded", true) end)
+                timer.Simple(1, function()client:SetVar("playerClassPluginLoaded", true) end)
             end
         end
     end
