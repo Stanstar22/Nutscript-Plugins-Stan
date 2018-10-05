@@ -7,12 +7,6 @@ nut.config.add("NPCKillAmount", 10, "How much money a player gets for killing an
 	category = "NPC"
 })
 
-function PLUGIN:PlayerInitialSpawn(ply)
-    local sid = ply:SteamID()
-    ply.SID = ply:UserID()
-end
-
-
 function PLUGIN:OnNPCKilled(victim, ent, weapon)
     -- If something killed the npc
     if not ent then return end
