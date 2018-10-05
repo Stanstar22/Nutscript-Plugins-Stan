@@ -15,9 +15,7 @@ function doLoadout(client)
             client:SetHealth( 100 )
         end
         
-        if (class.armor == 0 or class.armor == nil) then
-            client:SetArmor( 0 )
-        elseif (class.armor) then
+        if (class.armor) then
             client:SetArmor( class.armor )
         else
             client:SetArmor( 0 ) 
@@ -33,11 +31,6 @@ function doLoadout(client)
             client:SetViewOffsetDucked(scaleViewFixOffsetDuck * class.scale)
             
             client:SetModelScale( class.scale )
-                        
-        elseif (class.scale == 0 or class.scale == nil) then
-	    client:SetViewOffset(Vector(0, 0, 64))
-	    client:SetViewOffsetDucked(Vector(0, 0, 28))
-            client:SetModelScale ( 1 )
         else
 	    client:SetViewOffset(Vector(0, 0, 64))
 	    client:SetViewOffsetDucked(Vector(0, 0, 28))
@@ -46,10 +39,6 @@ function doLoadout(client)
         
         if (class.color) then
             client:SetPlayerColor(class.color)
-        elseif (class.color == 0 or class.color == nil) then
-            local col = client:GetInfo( "cl_playercolor" )
-            client:SetColor(Color(255, 255, 255, 255))
-            client:SetPlayerColor( Vector( col ) )
         else
             local col = client:GetInfo( "cl_playercolor" )
             client:SetColor(Color(255, 255, 255, 255))
@@ -59,8 +48,6 @@ function doLoadout(client)
         --If you can be bothered to fix the red X's when being shot by this be my guest, but I don't use it. Blood enums here https://wiki.garrysmod.com/page/Enums/BLOOD_COLOR
         --[[if (class.bloodcolor) then
             client:SetBloodColor(class.bloodcolor)
-        elseif (class.bloodcolor == 0 or class.bloodcolor == nil) then
-            client:SetBloodColor( BLOOD_COLOR_RED ) --This is the index for regular red blood
         else 
             client:SetBloodColor( BLOOD_COLOR_RED ) --This is the index for regular red blood
         end--]]
