@@ -47,7 +47,7 @@ function doLoadout(client)
 
 		if (class.runSpeed) then
 			if (class.runSpeedMultiplier) then
-				client:SetRunSpeed( nut.config.get("runSpeed") * class.runSpeed )
+				client:SetRunSpeed( math.Round(nut.config.get("runSpeed") * class.runSpeed) )
 			else
 				client:SetRunSpeed( class.runSpeed )
 			end
@@ -57,7 +57,7 @@ function doLoadout(client)
 
 		if (class.walkSpeed) then
 			if (class.walkSpeedMultiplier) then
-				client:SetWalkSpeed( nut.config.get("walkSpeed") * class.walkSpeed )
+				client:SetWalkSpeed( math.Round(nut.config.get("walkSpeed") * class.walkSpeed) )
 			else
 				client:SetWalkSpeed( class.walkSpeed )
 			end
