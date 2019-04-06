@@ -64,13 +64,22 @@ function doLoadout(client)
 		else
 			client:SetWalkSpeed( nut.config.get("walkSpeed") )
 		end
-
-		--If you can be bothered to fix the red X's when being shot by this be my guest, but I don't use it. Blood enums here https://wiki.garrysmod.com/page/Enums/BLOOD_COLOR
-		--[[if (class.bloodcolor) then
+		
+		if (class.jumpPower) then
+			if (class.jumpPowerMultiplier) then
+				client:SetJumpPower( math.Round(160 * class.jumpPower) )
+			else
+				client:SetJumpPower( class.jumpPower )
+			end
+		else
+			client:SetJumpPower( 160 )
+		end
+		--Blood enums here https://wiki.garrysmod.com/page/Enums/BLOOD_COLOR
+		if (class.bloodcolor) then
 			client:SetBloodColor(class.bloodcolor)
 		else 
 			client:SetBloodColor( BLOOD_COLOR_RED ) --This is the index for regular red blood
-		end--]]
+		end
 
 	end
 end
@@ -128,6 +137,8 @@ CLASS.runSpeedMultiplier = true
 CLASS.walkSpeed = 150
 CLASS.walkSpeedMultiplier = false
 
+CLASS.jumpPower is same as how run and walk speed work
+
 The colour one works strange if you don't know how to use it, it uses vector colour and will only work on colourable playermodels
 like on default models where you can change the t-shirt colour though the context menu and click on playermodel and then colours.
 Basically if you want to force colours you must format it like this:
@@ -148,5 +159,5 @@ Vector(255 / 255, 255 / 255, 255 / 255)
 If you're still confused by the colour, perhaps the wiki page will help you more https://wiki.garrysmod.com/page/Player/SetPlayerColor
 
 CLASS.bloodcolor
-^This one if you are bothered to fix it but I don't use it
+Use ENUMs found on wiki
 --]]
