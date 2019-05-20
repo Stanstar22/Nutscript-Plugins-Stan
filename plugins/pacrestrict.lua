@@ -1,6 +1,9 @@
 PLUGIN.name = "PAC Restrict"
 PLUGIN.author = "Stan"
 PLUGIN.desc = "Disallows PAC usage to those who do not have a flag"
+
+nut.flag.add("o", "Access to PAC", function(client, isGiven) end)
+
 if (SERVER) then
     function PLUGIN:PlayerInitialSpawn(ply)
         ply:SetVar("playerHasPac", false)
