@@ -36,8 +36,9 @@ nut.command.add("adminsay", {
 	adminOnly = true,
 	syntax = "<string message>",
 	onRun = function(client, text)
+		text = table.concat(text, " ")
 		net.Start("adminSayAll")
-		net.WriteString(text[1])
+		net.WriteString(text)
 		net.Broadcast()
 	end,
 	prefix = {"/adminsay"},
