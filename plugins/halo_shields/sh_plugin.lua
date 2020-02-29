@@ -5,25 +5,48 @@ PLUGIN.desc = "Regenerating shields"
 --Sounds and effect textures are from OPTRE VJ SNPCs workshop addon
 
 --Config
-HaloShields = {}
-HaloShields.MaxShields = 250 --Max shields player can have
-HaloShields.RechargeTime = 0.25 --How long till every tick of armour
-HaloShields.RechargeAmount = 2 --How much armour every tick
+HaloShields = HaloShields or {}
+HaloShields.Legacy = HaloShields.Legacy or {}
+
+HaloShields.Legacy.Enabled = false --Enable legacy whitelist and shield system. This will make the amount of shields global for all whitelisted groups
+
+HaloShields.RechargeTime = 0.25 --How long till every tick of shields
+HaloShields.RechargeAmount = 2 --How much shields every tick
 HaloShields.Whitelist = {
+	--[[ USAGE
+	[TEAM_ENUM] = {Enable shields?, amount of shields. MUST BE AN INTEGER (whole number)},
+	--]]
+	[TEAM_UNASSIGNED] = {true, 200},
+}
+
+HaloShields.Legacy.MaxShields = 150 --Max shields player can have
+HaloShields.Legacy.Whitelist = {
+	--[[ EXAMPLE
 	[FACTION_SPARTAN] = true,
 	[FACTION_SPARTANHEAVY] = true,
 	[FACTION_SPARTANGRE] = true,
 	[FACTION_SPARTANWO] = true,
 	[FACTION_MCHIEF] = true,
-	--[TEAM_UNASSIGNED] = true,
+	EXAMPLE, you can remove this or put your whitelist out of the comment block --]]
+	[TEAM_UNASSIGNED] = true,
 }
 
 if SERVER then
 	local function StartRecharge( ply )
 		timer.Create("halo_shield:Recharge"..ply:SteamID(), HaloShields.RechargeTime, 0, function()
 			if ply:IsValid() then
+				local plyteam = ply:Team()
 				local chargeAmount = ply:GetNWInt("Shield_HP")
-				ply:SetNWInt("Shield_HP", math.Clamp(chargeAmount+HaloShields.RechargeAmount,0,HaloShields.MaxShields))
+				local maxshield = nil
+				if HaloShields.Legacy.Enabled then
+					maxshield = HaloShields.Legacy.MaxShields
+				else
+					maxshield = HaloShields.Whitelist[plyteam][2]
+				end
+				
+				if maxshield == nil then return end
+				
+				ply:SetNWInt("Shield_HP", math.Clamp(chargeAmount+HaloShields.RechargeAmount,0,maxshield))
 				timer.Remove("halo_shield:NoShieldEffect"..ply:SteamID())
 
 				local effectdata = EffectData()
@@ -32,19 +55,34 @@ if SERVER then
 				util.Effect("halo_shield_regenring", effectdata)
 
 				ply.ShieldShldExplode = true
-
-				if chargeAmount >= HaloShields.MaxShields then
-					timer.Remove("halo_shield:Recharge"..ply:SteamID())
-					--print("Removing recharge timer")
+				
+				if HaloShields.Legacy.Enabled then
+					if chargeAmount >= HaloShields.Legacy.MaxShields then
+						timer.Remove("halo_shield:Recharge"..ply:SteamID())
+						--print("Removing recharge timer")
+					end
+				else
+					if chargeAmount >= HaloShields.Whitelist[plyteam][2] then
+						timer.Remove("halo_shield:Recharge"..ply:SteamID())
+					end
 				end
 			end
 		end)
 	end
 
 	function PLUGIN:PlayerSpawn( ply )
-		if (HaloShields.Whitelist[ply:Team()]) then
+		if (HaloShields.Whitelist[ply:Team()][1]) then
 			--Set the default shield strength
-			local shieldVal = HaloShields.MaxShields
+			local shieldVal = nil
+			
+			if HaloShields.Legacy.Enabled then
+				shieldVal = HaloShields.Legacy.MaxShields
+			else
+				shieldVal = HaloShields.Whitelist[ply:Team()][2]
+			end
+			
+			if shieldVal == nil then return end
+			
 			ply:SetNWInt( "Shield_HP", shieldVal )
 			--Make it so people don't bleed when being shot at with shields active
 			ply:SetBloodColor(-1)
@@ -70,19 +108,13 @@ if SERVER then
 
 	function PLUGIN:PlayerHurt( ply, att, healthRem, damTaken )
 
-		if (HaloShields.Whitelist[ply:Team()]) then
-
+		if (HaloShields.Whitelist[ply:Team()][1]) then
+		
 			local plyShield = ply:GetNWInt( "Shield_HP" )
 
 			--print("Damage Taken: "..damTaken)
 			if plyShield > 0 then
-				local armour = ply:Armor()
-				if armour > 0 then
-					ply:SetHealth( healthRem + (damTaken * 0.2) )
-					ply:SetArmor( armour + (damTaken * 0.8 ) )
-				else
-					ply:SetHealth( healthRem + damTaken )
-				end
+				ply:SetHealth( healthRem + damTaken )
 				ply:SetNWInt( "Shield_HP", math.Clamp( plyShield - damTaken, 0, plyShield ) )
 				ply:SetBloodColor(-1)
 				ply:EmitSound(Sound("shields/hit" .. math.random(1,7) .. ".wav"),80,100)
@@ -134,15 +166,15 @@ if SERVER then
 			end
 
 			timer.Create("halo_shield:RechargeDelay"..ply:SteamID(), 7, 1, function() if ply:IsValid() then StartRecharge( ply ) ply:EmitSound(Sound("ambient/energy/whiteflash.wav"),80,115) end end)
-
-	end
+		
+		end
 
 	end
 
 	function PLUGIN:EntityTakeDamage( target, dmginfo )
 		if target:IsPlayer() then
 			local ply = target
-			if (HaloShields.Whitelist[ply:Team()]) then
+			if (HaloShields.Whitelist[ply:Team()][1]) then
 				local shields = ply:GetNWInt( "Shield_HP" )
 				if shields > 0 then
 					local effectdata = EffectData()
@@ -178,20 +210,33 @@ if CLIENT then
 	local armorSmoothing = LocalPlayer():GetNWInt( "Shield_HP" )
 
 	function PLUGIN:HUDPaint()
-		if (HaloShields.Whitelist[LocalPlayer():Team()]) then
+		if (HaloShields.Whitelist[LocalPlayer():Team()][1]) then
 			--Variables
 			local width = ScrW()
 			local height = ScrH()
-			local frametime = FrameTime()
+			--local frametime = FrameTime()
 
 
 			local armor = LocalPlayer():GetNWInt( "Shield_HP" )
 			--Armour
-			draw.RoundedBox(2, 350, height - 70, width - 700, 30, Color(0,0,0,220))
+			--[[draw.RoundedBox(2, 350, height - 70, width - 700, 30, Color(0,0,0,220))
 			armorSmoothing = Lerp(5 * frametime, armorSmoothing, armor)
 			draw.RoundedBox(2, 355, height - 65, math.Clamp((armorSmoothing*(width/157))/(HaloShields.MaxShields/100),0,width - 710), 20, Color(200,200,200))
 
-			draw.SimpleText( math.floor(math.Clamp(armor,0,armor)) , "SimpleHUDFont", (width/2)-5, height - 56, Color(math.Clamp(255 - armor / HaloShields.MaxShields * 255,0,255),0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText( math.floor(math.Clamp(armor,0,armor)) , "SimpleHUDFont", (width/2)-5, height - 56, Color(math.Clamp(255 - armor / HaloShields.MaxShields * 255,0,255),0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)--]]
+			
+			local maxShields = nil
+			
+			if HaloShields.Legacy.Enabled then
+				maxShields = HaloShields.Legacy.MaxShields
+			else
+				maxShields = HaloShields.Whitelist[LocalPlayer():Team()][2]
+			end
+			
+			draw.RoundedBox(2, width/3, height - 70, width / 3, 30, Color(0,0,0,220))
+			draw.RoundedBox(2, (width/3) + 5, height - 65, math.Clamp(armor/(maxShields/width * 3),0, (width / 3) - 10), 20, Color(200,200,200))
+
+			draw.SimpleText( math.floor(math.Clamp(armor,0,armor)) , "SimpleHUDFont", (width/2), height - 56, Color(math.Clamp(255 - armor / maxShields * 255,0,255),0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
 	end
 
