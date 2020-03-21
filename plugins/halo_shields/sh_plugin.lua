@@ -31,6 +31,14 @@ HaloShields.Legacy.Whitelist = {
 	[TEAM_UNASSIGNED] = true,
 }
 
+function PLUGIN:getWhiteList(client)
+	if HaloShields.Legacy.Enabled then
+		return HaloShields.Legacy.Whitelist[client:Team()]
+	else
+		return HaloShields.Whitelist[client:Team()][1]
+	end
+end
+
 if SERVER then
 	local function StartRecharge( ply )
 		timer.Create("halo_shield:Recharge"..ply:SteamID(), HaloShields.RechargeTime, 0, function()
@@ -71,7 +79,7 @@ if SERVER then
 	end
 
 	function PLUGIN:PlayerSpawn( ply )
-		if (HaloShields.Whitelist[ply:Team()][1]) then
+		if (PLUGIN:getWhiteList( ply )) then
 			--Set the default shield strength
 			local shieldVal = nil
 			
@@ -108,7 +116,7 @@ if SERVER then
 
 	function PLUGIN:PlayerHurt( ply, att, healthRem, damTaken )
 
-		if (HaloShields.Whitelist[ply:Team()][1]) then
+		if (PLUGIN:getWhiteList( ply )) then
 		
 			local plyShield = ply:GetNWInt( "Shield_HP" )
 
@@ -174,7 +182,7 @@ if SERVER then
 	function PLUGIN:EntityTakeDamage( target, dmginfo )
 		if target:IsPlayer() then
 			local ply = target
-			if (HaloShields.Whitelist[ply:Team()][1]) then
+			if (PLUGIN:getWhiteList( ply )) then
 				local shields = ply:GetNWInt( "Shield_HP" )
 				if shields > 0 then
 					local effectdata = EffectData()
@@ -210,7 +218,7 @@ if CLIENT then
 	local armorSmoothing = LocalPlayer():GetNWInt( "Shield_HP" )
 
 	function PLUGIN:HUDPaint()
-		if (HaloShields.Whitelist[LocalPlayer():Team()][1]) then
+		if (PLUGIN:getWhiteList( LocalPlayer() )) then
 			--Variables
 			local width = ScrW()
 			local height = ScrH()
