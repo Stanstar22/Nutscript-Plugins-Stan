@@ -34,6 +34,7 @@ I HAVE NO IDEA WHY THE HOOK DOSNT WORK BUT OH WELL
 
 
 nut.command.add("classwhitelist", {
+	adminOnly = true,
 	syntax = "<string name> <string class>",
 	onRun = function(client, arguments)
 	local target = nut.command.findPlayer(client, arguments[1])
@@ -87,6 +88,7 @@ nut.command.add("classwhitelist", {
 
 
 nut.command.add("classunwhitelist", {
+	adminOnly = true,
 	syntax = "<string name> <string class>",
 	onRun = function(client, arguments)
 		local target = nut.command.findPlayer(client, arguments[1])
