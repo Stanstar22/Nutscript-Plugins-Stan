@@ -3,7 +3,7 @@
 --1.1-beta however stores the time in a formatted string that you need to convert which is what I have done
 PLUGIN.name = "Data Reset"
 PLUGIN.author = "Stan"
-PLUGIN.desc = "Resets character data after a certain date of not playing that character"
+PLUGIN.desc = "Do stuff to a character/player after inactive on a character for selected timeframe"
 
 
 if CLIENT then return end
