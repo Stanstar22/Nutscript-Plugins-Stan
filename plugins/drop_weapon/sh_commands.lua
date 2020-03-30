@@ -16,7 +16,6 @@ nut.command.add("dropweapon", {
             if not IsValid(client) then return end
             if not client:HasWeapon( wepClass ) then return end
             client:StripWeapon(wepClass)
-            -- Get the entity 30 units infront of the player.
             local data = {}
                 data.start = client:GetShootPos()
                 data.endpos = data.start + client:GetAimVector()*30
