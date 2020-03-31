@@ -27,7 +27,6 @@ nut.command.add("dropweapon", {
             if ( !IsValid( wep ) ) then return end
             wep.model = PLUGIN.ModelOverwrite[wepClass] or actWep:GetModel() or PLUGIN.CallbackModel 
             wep:SetPos( endPos )
-            --set the comms channels on that box
             wep.wep = wepClass
             wep:Spawn()
             
