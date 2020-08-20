@@ -23,7 +23,7 @@ function PLUGIN:PlayerLoadedChar(client, character, lastChar)
 
 			-- Check if the class was set.
 			if (lastClass) then
-                character:joinClass(lastClass)
+				character:joinClass(lastClass)
 			end
 		end
 	end)
