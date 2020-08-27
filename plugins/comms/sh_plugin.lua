@@ -76,7 +76,11 @@ PLUGIN.CommsChannels = {
         prefix = {"/met", "/mp", "/metro"},
     },
 }
-
+--dont touch this function
+PLUGIN.CommsFactions = {}
+PLUGIN.CommsClasses = {}
+function PLUGIN:InitializedSchema()
+--dont touch this function
 /*
 
 Copy and paste the functions you want here.
@@ -110,8 +114,9 @@ PLUGIN.CommsClasses = {
     [CLASS_ONIFADM] = function(client) table.insert(client.CommsAccess, "oni") end,
     [CLASS_CIVILIANGOV] = function(client) table.insert(client.CommsAccess, "met") table.insert(client.CommsAccess, "unsc") end,
 }
-
-
+--dont touch
+end
+--dont touch
 
 /****************************************************
 --   _____             __ _                        _ 
