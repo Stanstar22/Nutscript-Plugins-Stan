@@ -88,7 +88,7 @@ Put the TEAM code in the square brackets. Make sure they are full caps.
 Change the string to whatever you made the shortName value of your comms
 
 */
-PLUGIN.CommsFactions = {
+self.CommsFactions = {
     [FACTION_UNSC] = function(client) table.insert(client.CommsAccess, "unsc") end,
     [FACTION_MP] = function(client) table.insert(client.CommsAccess, "unsc") table.insert(client.CommsAccess, "civ") table.insert(client.CommsAccess, "met") end,
     [FACTION_INNIE] = function(client) table.insert(client.CommsAccess, "innie") table.insert(client.CommsAccess, "civ") end,
@@ -100,7 +100,7 @@ PLUGIN.CommsFactions = {
 Put any class setups here if you want certain classes to have access to comms channels
 
 */
-PLUGIN.CommsClasses = {
+self.CommsClasses = {
     [CLASS_ONIENS] = function(client) table.insert(client.CommsAccess, "oni") end,
     [CLASS_ONILTJG] = function(client) table.insert(client.CommsAccess, "oni") end,
     [CLASS_ONILT] = function(client) table.insert(client.CommsAccess, "oni") end,
