@@ -79,7 +79,7 @@ if SERVER then
 	end
 
 	function PLUGIN:PlayerSpawn( ply )
-		if (PLUGIN:getWhiteList( ply )) then
+		if (self:getWhiteList( ply )) then
 			--Set the default shield strength
 			local shieldVal = nil
 			
@@ -116,7 +116,7 @@ if SERVER then
 
 	function PLUGIN:PlayerHurt( ply, att, healthRem, damTaken )
 
-		if (PLUGIN:getWhiteList( ply )) then
+		if (self:getWhiteList( ply )) then
 		
 			local plyShield = ply:GetNWInt( "Shield_HP" )
 
@@ -182,7 +182,7 @@ if SERVER then
 	function PLUGIN:EntityTakeDamage( target, dmginfo )
 		if target:IsPlayer() then
 			local ply = target
-			if (PLUGIN:getWhiteList( ply )) then
+			if (self:getWhiteList( ply )) then
 				local shields = ply:GetNWInt( "Shield_HP" )
 				if shields > 0 then
 					local effectdata = EffectData()
@@ -218,7 +218,7 @@ if CLIENT then
 	local armorSmoothing = LocalPlayer():GetNWInt( "Shield_HP" )
 
 	function PLUGIN:HUDPaint()
-		if (PLUGIN:getWhiteList( LocalPlayer() )) then
+		if (self:getWhiteList( LocalPlayer() )) then
 			--Variables
 			local width = ScrW()
 			local height = ScrH()
