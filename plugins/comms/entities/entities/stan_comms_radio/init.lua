@@ -15,35 +15,35 @@ function ENT:Initialize()
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetUseType(SIMPLE_USE)
  
-    local phys = self:GetPhysicsObject()
+	local phys = self:GetPhysicsObject()
 	if (phys:IsValid()) then
 		phys:Wake()
 	end
 end
  
 function ENT:Use( activator, caller )
-    local newComms = caller.CommsAccess
-    for k,v in ipairs(self.Comms) do
-        if !(table.HasValue(caller.CommsAccess, v)) then
-            table.insert(newComms, v)
-            caller:ChatPrint("You have gained access to [".. string.upper(v).."] comms.")
-            self.GainedComms = true
-        end
-    end
+	local newComms = caller.CommsAccess
+	for k,v in ipairs(self.Comms) do
+		if !(table.HasValue(caller.CommsAccess, v)) then
+			table.insert(newComms, v)
+			caller:ChatPrint("You have gained access to [".. string.upper(v).."] comms.")
+			self.GainedComms = true
+		end
+	end
 
-    if !self.GainedComms then
-        caller:ChatPrint("There are no new comms channels to gain off this radio.")
-        return
-    end
-    
-    caller.CommsAccess = newComms
-    self:Remove()
+	if !self.GainedComms then
+		caller:ChatPrint("There are no new comms channels to gain off this radio.")
+		return
+	end
+	
+	caller.CommsAccess = newComms
+	self:Remove()
 end
  
 function ENT:Think()
-    if CurTime() >= self.DeleteTime then
-        self:Remove()
-    end
-    self:NextThink(self.DeleteTime)
-    return true
+	if CurTime() >= self.DeleteTime then
+		self:Remove()
+	end
+	self:NextThink(self.DeleteTime)
+	return true
 end
