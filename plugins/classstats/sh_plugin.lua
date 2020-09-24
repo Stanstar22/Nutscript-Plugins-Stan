@@ -2,7 +2,7 @@ PLUGIN.name = "Class Stats"
 PLUGIN.author = "Stan"
 PLUGIN.desc = "Allows class stats to be set and applied"
 
-nut.util.include("sv_autoloader.lua")
+nut.util.include("sv_autoloadout.lua")
 
 --[[If you already don't know what this does,
 basically it allows you to do things like:
