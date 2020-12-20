@@ -2,7 +2,10 @@ PLUGIN.name = "Class Whitelist"
 PLUGIN.author = "Stan"
 PLUGIN.desc = "Adds whitelist to class functions"
 
---[[function PLUGIN:CanPlayerJoinClass( client, nclass, classData )
+function PLUGIN:CanPlayerJoinClass( client, nclass, classData )
+
+	--If the class is default we do not need a whitelist
+	if classData.isDefault then return end
 	
 	local char = client:getChar()
 	local wl = char:getData("whitelists", {})
@@ -12,14 +15,15 @@ PLUGIN.desc = "Adds whitelist to class functions"
 		return false
 	end
 	
-end--]]
+end
 
 
 
 
-/* IMPORTANT */
+--[[
 
-/* TO MAKE THIS SCRIPT WORK, YOU HAVE TO ADD THIS TO THE CLASSES YOU WANT TO WHITELIST
+/* This is for legacy versions of NutScript before my change to how the hook works was pushed to the beta branch on 15/12/2020
+For future versions please just don't touch anything here and the hook should make this plugin work with no extra steps.
 
 function CLASS:onCanBe(client)
 	local char = client:getChar()
@@ -29,8 +33,8 @@ function CLASS:onCanBe(client)
 end
 
 
-I HAVE NO IDEA WHY THE HOOK DOSNT WORK BUT OH WELL
-*/
+
+--]]
 
 
 nut.command.add("classwhitelist", {
