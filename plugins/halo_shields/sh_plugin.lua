@@ -1,13 +1,15 @@
+local PLUGIN = PLUGIN
 PLUGIN.name = "Halo Shields"
 PLUGIN.author = "Stan"
 PLUGIN.desc = "Regenerating shields"
 --Effects used in this addon are located in the addons/halo_shields
 --Sounds and effect textures are from OPTRE VJ SNPCs workshop addon
 
---Config
 HaloShields = HaloShields or {}
 HaloShields.Legacy = HaloShields.Legacy or {}
 
+function PLUGIN:InitializedSchema()
+--Config
 HaloShields.Legacy.Enabled = false --Enable legacy whitelist and shield system. This will make the amount of shields global for all whitelisted groups
 
 HaloShields.RechargeTime = 0.25 --How long till every tick of shields
@@ -30,6 +32,7 @@ HaloShields.Legacy.Whitelist = {
 	EXAMPLE, you can remove this or put your whitelist out of the comment block --]]
 	[TEAM_UNASSIGNED] = true,
 }
+end
 
 function PLUGIN:getWhiteList(client)
 	if HaloShields.Legacy.Enabled then
