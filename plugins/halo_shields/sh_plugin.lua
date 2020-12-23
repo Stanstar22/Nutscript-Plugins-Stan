@@ -38,7 +38,11 @@ function PLUGIN:getWhiteList(client)
 	if HaloShields.Legacy.Enabled then
 		return HaloShields.Legacy.Whitelist[client:Team()]
 	else
-		return HaloShields.Whitelist[client:Team()][1]
+		if HaloShields.Whitelist[client:Team()] then
+			return HaloShields.Whitelist[client:Team()][1]
+		else
+			return false
+		end
 	end
 end
 
