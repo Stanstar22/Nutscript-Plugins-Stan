@@ -8,7 +8,6 @@ PLUGIN.desc = "Regenerating shields"
 HaloShields = HaloShields or {}
 HaloShields.Legacy = HaloShields.Legacy or {}
 
-function PLUGIN:InitializedSchema()
 --Config
 HaloShields.Legacy.Enabled = false --Enable legacy whitelist and shield system. This will make the amount of shields global for all whitelisted groups
 
@@ -32,7 +31,6 @@ HaloShields.Legacy.Whitelist = {
 	EXAMPLE, you can remove this or put your whitelist out of the comment block --]]
 	[TEAM_UNASSIGNED] = true,
 }
-end
 
 function PLUGIN:getWhiteList(client)
 	if HaloShields.Legacy.Enabled then
